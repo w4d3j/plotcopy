@@ -80,6 +80,7 @@ def bitchStatus(theta,epsilon):
 			bno = int(bitch.numplots(olde))
 			fso = int(bitch.disk(left))
 			print('	  {}:	    {}	{}  	{}'.format(bn, bfs, bno, fso))
+	del bitchdict
 
 def copyFile(shitfile, thisbitch):
 	bitchfile = thisbitch.path() / shitfile.name
@@ -98,6 +99,7 @@ def copyFile(shitfile, thisbitch):
 	shutil.copystat(shitfile, bitchfile)
 	hang(5)
 	shitfile.unlink()
+	del bitchfile
 
 def checkShitBitch(shitfile, bitch_dir):
 	bitch_path = bitch_dir / shitfile.name
@@ -111,8 +113,10 @@ def checkShitBitch(shitfile, bitch_dir):
 			os.remove(shitfile)
 			print('removed a source file that thought it ' +
 					'escaped deletion {}'.format(shitfile))
+			del bitch_path
 			return -1
 	except FileNotFoundError:
+		del bitch_path
 		return 0
 
 def timestamp():
@@ -162,6 +166,7 @@ def getThisBitch():
 		print('Deleted {} plots from {}'.format(dp, thisbitch.name))
 	bitchStatus(theta, epsilon)
 	print('\n(this bitch is {})'.format(thisbitch.name))
+	del epsilon, theta, del_plots, dp
 	return thisbitch
 
 def getShitBitch():
@@ -188,18 +193,18 @@ def main():
 			tn = thisbitch.name
 			tt, tu, tf, tl = thisbitch.disk(all)
 			print('\n{}  :|:  Free: {} GB  -:- '.format(tn, tf) +
-				'Used:{} GB  :|:  "Left": {} GB    '.format(tu, tl) +
-				'[(|:- of {}\n'.format(tt))
+				'Used:{} GB  :|:  Left: {} GB    '.format(tu, tl))
 		if len(listplots(shiteater)) > 0:
-			print('Move time: {} seconds'.format(elapsed) +
+			print('Copy time: {}s'.format(elapsed) +
 				', but moving on to the next plot.')
 			timestamp()
 		else:
 			rem_time = 2567 - elapsed
-			print('Move time: {} seconds, now waiting '.format(elapsed) +
-				'{} to get to 2567 seconds (~43 min)'.format(rem_time))
+			print('Copy time: {}s, waiting '.format(elapsed) +
+				'{} to get to 2567s (~43m)'.format(rem_time))
 			timestamp()
 			hang(rem_time)
+		del start, done, elapsed, tt, tu, tf, tl, rem_time
 		print('\nannnddddd.......\n\n')
 
 if __name__ == '__main__':
