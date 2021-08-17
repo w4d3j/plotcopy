@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import os, sys, shutil, time
+import os, sys, shutil, time, inspect
 from datetime import datetime
-from pathlib import Path, PurePath
+from pathlib import Path
 
 x = Path.home() / 'x'
 shiteater = x / 'shiteater'
@@ -13,42 +13,6 @@ free = 'free'
 used = 'used'
 left = 'left'
 total = 'total'
-
-
-class MemberBerry:
-	def __init__(self):
-		self.init = True
-		self.fuckups = {'count':1, 'mod': 0}
-		self.toggle = True
-		self.copied = 0
-
-	def clearinit(self):
-		self.init = False
-
-	def copiedone(self):
-		self.copied += 1
-
-	def dangler(self):
-		self.fuckups['count'] += 1
-
-	def check(self):
-		if self.toggle is True and self.init is not True:
-			chk = self.fuckups['count'] - self.fuckups['mod']
-			if chk > 0:
-				self.fuckups['mod'] = self.fuckups['count']
-				print('....still fucking up...')
-			elif chk == 0:
-				self.fuckups['mod'] += 1
-				print("........didn't fuck up this time?!?.....")
-			elif chk < 0:
-				self.fuckups['toggle'] = False
-				print('......TWOFER, memberberry unchained!!!!')
-			if self.copied > 3:
-				self.fuckups['toggle'] = False
-				print('Giving up on counting fuckups for this job')
-		else:
-			return True
-
 class Bitch:
 	def __init__(self, nick):
 		self.name = nick
@@ -86,13 +50,16 @@ class Bitch:
 			print('IDKF')
 			return None
 
-nosy = Bitch('nosybitch')
-old = Bitch('oldbitch')
-little = Bitch('littlebitch')
-stuckup = Bitch('stuckupbitch')
-freaky = Bitch('freakybitch')
+bitch_list = []
 
-bitch_list = [freaky, little, nosy, stuckup, old]
+punk = '' #Bitch('punkbitch')
+easy = '' #Bitch('easybitch')
+ugly = Bitch('uglybitch')
+bits_list = [punk, ugly, easy]
+
+for bits in bits_list:
+    if isinstance(bits, Bitch) is True:
+        bitch_list.append(bits)
 
 def myFuncdf(df):
 	return df.disk(left)
@@ -124,12 +91,12 @@ def copyFile(shitfile, thisbitch):
 		else:
 			if shutil.stat.S_ISFIFO(fn.stat().st_mode):
 				raise shutil.SpecialFileError("`%s` is a named pipe" % fn)
+	timestamp()
 	with open(shitfile, 'rb') as fsrc:
 		with open(bitchfile, 'wb') as fdst:
 			shutil.copyfileobj(fsrc, fdst, 10485760)
 	shutil.copystat(shitfile, bitchfile)
 	hang(5)
-	mb.copied_one()
 	shitfile.unlink()
 
 def checkShitBitch(shitfile, bitch_dir):
@@ -137,12 +104,10 @@ def checkShitBitch(shitfile, bitch_dir):
 	timestamp()
 	try:
 		if shitfile.stat().st_size > bitch_path.stat().st_size:
-			mb.dangler()
 			os.remove(bitch_path)
 			print('removed partial f(a)il[e] from {}'.format(bitch_dir))
 			return 1
 		elif shitfile.stat().st_size == bitch_path.stat().st_size:
-			mb.dangler()
 			os.remove(shitfile)
 			print('removed a source file that thought it ' +
 					'escaped deletion {}'.format(shitfile))
@@ -163,43 +128,36 @@ def getShitFile():
 		if len(shitplots) == 0:
 			print('...no file yet, sleeping for 321s')
 			hang()
-			shitplots_ = listplots(shiteater)
-			if len(shitplots_) > 0:
-				print('\n  Found shitplot. Making sure it finished for 321s.')
-				timestamp()
-				hang()
-				return shitplots_[0]
 		else:
 			return shitplots[0]
-
 
 
 def getThisBitch():
 	epsilon, theta = [], []
 	for bitch in bitch_list:
-		if bitch.numplots(olde) > 4:
+		if bitch.numplots(olde) > 2:
 			theta.append(bitch)
-		elif bitch.disk(free) > 101:
+		elif bitch.disk(free) > 101 or bitch.numplots(olde) == 1:
 			epsilon.append(bitch)
 		else:
 			print('Well, that {} is done for.'.format(bitch.name))
-	if len(theta) > 0:
-		theta.sort(key=myFuncdf)
-		thisbitch = theta[0]
-	elif len(epsilon) > 0:
+	if len(epsilon) > 0:
 		epsilon.sort(reverse=True, key=myFuncop)
 		thisbitch = epsilon[0]
+	elif len(theta) > 0:
+		theta.sort(key=myFuncdf)
+		thisbitch = theta[0]
 	elif len(theta) + len(epsilon) < 1:
 		sys.exit('NO MORE BITCHES TO GET COPIED ALL OVER')
 	else:
 		sys.exit("something smells fishy... something's up with these bitches")
-	if thisbitch.disk(free) < 234:
+	if thisbitch.disk(free) < 101:
 		del_plots = thisbitch.plots(olde)[:2]
 		print('DELtaETEing:')
 		dp = 0
 		for del_plot in del_plots:
 			print('...	' + str(del_plot))
-			# del_plot.unlink()
+			del_plot.unlink()
 			dp+=1
 		print('Deleted {} plots from {}'.format(dp, thisbitch.name))
 	bitchStatus(theta, epsilon)
@@ -209,18 +167,15 @@ def getThisBitch():
 def getShitBitch():
 	shitfile = getShitFile()
 	thisbitch = getThisBitch()
-	if mb.toggle is True:
-		if checkShitBitch(shitfile, thisbitch.path()) == 0:
-			return shitfile, thisbitch
-		else:
-			main()
-	else:
+	if checkShitBitch(shitfile, thisbitch.path()) == 0:
 		return shitfile, thisbitch
+	else:
+		main()
+
 
 def main():
 	while True:
 		shitfile, thisbitch = getShitBitch()
-		mb.check()
 		start = time.time()
 		try:
 			copyFile(shitfile, thisbitch)
@@ -235,22 +190,19 @@ def main():
 			print('\n{}  :|:  Free: {} GB  -:- '.format(tn, tf) +
 				'Used:{} GB  :|:  "Left": {} GB    '.format(tu, tl) +
 				'[(|:- of {}\n'.format(tt))
-		if len(listplots(shiteater)) > 0 or mb.init is True:
+		if len(listplots(shiteater)) > 0:
 			print('Move time: {} seconds'.format(elapsed) +
 				', but moving on to the next plot.')
 			timestamp()
-			mb.clearinit()
 		else:
-			rem_time = 3456 - elapsed
+			rem_time = 2567 - elapsed
 			print('Move time: {} seconds, now waiting '.format(elapsed) +
-				'{} to get to 3456 seconds (57.6 min)'.format(rem_time))
+				'{} to get to 2567 seconds (~43 min)'.format(rem_time))
 			timestamp()
 			hang(rem_time)
-		print('\nannnddddd.......\n\n\n')
+		print('\nannnddddd.......\n\n')
 
 if __name__ == '__main__':
-	mb = MemberBerry()
-
 	main()
 
 
@@ -340,10 +292,6 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
 #  ____________________
   #_______________________
  	# def path(self, whichpath=''):
@@ -351,3 +299,9 @@ if __name__ == '__main__':
 	# 	if whichpath == olde:
 	# 		fullpath = fullpath / olde
 	# 	return Path(x / str(self.name) / whichpath)
+
+
+
+# psycho = '' #Bitch('psychobitch')
+# nosy = '' #Bitch('nosybitch')
+# stuckup = '' #Bitch('stuckupbitch')
